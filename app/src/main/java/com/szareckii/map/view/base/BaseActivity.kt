@@ -58,7 +58,6 @@ abstract class BaseActivity<T : AppState> : AppCompatActivity() {
         loading_frame_layout.visibility = View.VISIBLE
     }
 
-
     companion object {
         private const val DIALOG_FRAGMENT_TAG = "74a54328-5d62-46bf-ab6b-cbf5d8c79522"
     }

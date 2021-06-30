@@ -40,6 +40,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
 }
 
 dependencies {
@@ -54,12 +55,13 @@ dependencies {
 
     // Kotlin
     implementation 'androidx.core:core-ktx:1.5.0'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.10'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.32'
 
     // Rx-Java
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
 
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
@@ -71,8 +73,8 @@ dependencies {
     implementation 'org.koin:koin-android-viewmodel:2.0.1'
 
     //Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3-native-mt'
 
     //Maps
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
