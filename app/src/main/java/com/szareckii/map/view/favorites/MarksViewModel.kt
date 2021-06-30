@@ -5,9 +5,7 @@ import com.szareckii.map.model.data.AppState
 import com.szareckii.map.viewmodel.BaseViewModel
 import kotlinx.coroutines.launch
 
-// Тоже мало отличий
-class FavoritesViewModel() :
-    BaseViewModel<AppState>() {
+class MarksViewModel(private val interactor: MarksInteractor) : BaseViewModel<AppState>() {
 
     private val liveDataForViewToObserve: LiveData<AppState> = _mutableLiveData
 
@@ -15,14 +13,21 @@ class FavoritesViewModel() :
         return liveDataForViewToObserve
     }
 
-    override fun getData(word: String, isOnline: Boolean) {
+    override fun getData() {
         _mutableLiveData.value = AppState.Loading(null)
         cancelJob()
-        viewModelCoroutineScope.launch { startInteractor(word, isOnline) }
+        viewModelCoroutineScope.launch { startInteractor() }
     }
 
-    private suspend fun startInteractor(word: String, isOnline: Boolean) {
-//        _mutableLiveData.postValue(parseLocalSearchResults(interactor.getData(word, isOnline)))
+    fun saveData(latitude: Double, longitude: Double) {
+        _mutableLiveData.value = AppState.Loading(null)
+        cancelJob()
+        viewModelCoroutineScope.launch {
+            interactor.saveData(latitude, longitude) }
+    }
+
+    private suspend fun startInteractor() {
+        _mutableLiveData.postValue(interactor.getData())
     }
 
     override fun handleError(error: Throwable) {
@@ -30,9 +35,7 @@ class FavoritesViewModel() :
     }
 
     override fun onCleared() {
-        _mutableLiveData.value = AppState.Success(null) // Set View to
-        // original state in
-        // onStop
+        _mutableLiveData.value = AppState.Success(null)
         super.onCleared()
     }
 }

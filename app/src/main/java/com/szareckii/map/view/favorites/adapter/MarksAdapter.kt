@@ -9,7 +9,7 @@ import com.szareckii.map.R
 import com.szareckii.map.model.data.DataModel
 import kotlinx.android.synthetic.main.activity_favorites_recyclerview_item.view.*
 
-class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.RecyclerItemViewHolder>() {
+class MarksAdapter : RecyclerView.Adapter<MarksAdapter.RecyclerItemViewHolder>() {
 
     private var data: List<DataModel> = arrayListOf()
     // Метод передачи данных в адаптер

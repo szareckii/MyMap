@@ -6,17 +6,16 @@ import com.szareckii.map.R
 import com.szareckii.map.model.data.AppState
 import com.szareckii.map.model.data.DataModel
 import com.szareckii.map.view.base.BaseActivity
-import com.szareckii.map.view.favorites.adapter.HistoryAdapter
+import com.szareckii.map.view.favorites.adapter.MarksAdapter
 import org.koin.android.viewmodel.ext.android.viewModel
-import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_favorites.*
 
 
-class FavoritesActivity : BaseActivity<AppState>() {
+class MarksActivity : BaseActivity<AppState>() {
 
-    override val model: FavoritesViewModel by viewModel()
+    override val model: MarksViewModel by viewModel()
 
-    private val adapter: HistoryAdapter by lazy { HistoryAdapter() }
+    private val adapter: MarksAdapter by lazy { MarksAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,11 +29,11 @@ class FavoritesActivity : BaseActivity<AppState>() {
     // Сразу запрашиваем данные из локального репозитория
     override fun onResume() {
         super.onResume()
-        model.getData("", false)
+        model.getData()
     }
 
     // Вызовется из базовой Activity, когда данные будут готовы
-    fun setDataToAdapter(data: List<DataModel>) {
+    override fun setDataToAdapter(data: List<DataModel>) {
         adapter.setData(data)
     }
 
@@ -60,7 +59,7 @@ class FavoritesActivity : BaseActivity<AppState>() {
         if (history_activity_recyclerview.adapter != null) {
             throw IllegalStateException("The ViewModel should be initialised first")
         }
-        model.subscribe().observe(this@FavoritesActivity, Observer<AppState> { renderData(it) })
+        model.subscribe().observe(this@MarksActivity, { renderData(it) })
     }
 
     // Инициализируем адаптер и передаем его в RecyclerView

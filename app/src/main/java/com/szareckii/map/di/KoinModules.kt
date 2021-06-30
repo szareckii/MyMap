@@ -4,7 +4,8 @@ import com.szareckii.map.model.data.DataModel
 import com.szareckii.map.model.repository.DataSource
 import com.szareckii.map.model.repository.Repository
 import com.szareckii.map.model.repository.RepositoryImplementation
-import com.szareckii.map.view.favorites.FavoritesViewModel
+import com.szareckii.map.view.favorites.MarksInteractor
+import com.szareckii.map.view.favorites.MarksViewModel
 import com.szareckii.map.view.main.MainViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -20,6 +21,8 @@ val mainScreen = module {
     viewModel { MainViewModel() }
 }
 
-val favoritesScreen = module {
-    viewModel { FavoritesViewModel() }
+val marksScreen = module {
+//    viewModel { MarksViewModel() }
+    factory { MarksInteractor(get()) }
+    viewModel { MarksViewModel(get()) }
 }

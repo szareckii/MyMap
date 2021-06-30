@@ -20,18 +20,19 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.szareckii.map.R
 import com.szareckii.map.model.data.AppState
+import com.szareckii.map.model.data.DataModel
 import com.szareckii.map.view.base.BaseActivity
-import com.szareckii.map.view.favorites.FavoritesActivity
+import com.szareckii.map.view.favorites.MarksActivity
+import com.szareckii.map.view.favorites.MarksViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.IOException
-
 
 class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     GoogleMap.OnMyLocationButtonClickListener,
     GoogleMap.OnMyLocationClickListener
 {
 
-    override val model: MainViewModel by viewModel()
+    override val model: MarksViewModel by viewModel()
 
     private lateinit var mMap: GoogleMap
     private var currentMarker: Marker? = null
@@ -133,7 +134,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
               R.id.menu_favorites -> {
-                startActivity(Intent(this, FavoritesActivity::class.java))
+                startActivity(Intent(this, MarksActivity::class.java))
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -189,6 +190,11 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker))
                 )
         markers.add(marker)
+
+        val lat: Double = location.latitude // Широта
+        val lng: Double = location.longitude // Долгота
+
+        model.saveData(lat, lng)
     }
 
 
@@ -223,6 +229,9 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
 
     companion object {
         private val PERMISSION_REQUEST_CODE = 10
+    }
+
+    override fun setDataToAdapter(data: List<DataModel>) {
     }
 
 }

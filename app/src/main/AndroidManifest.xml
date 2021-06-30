@@ -31,7 +31,7 @@
             android:name=".view.description.DescriptionActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".view.favorites.FavoritesActivity"
+            android:name=".view.favorites.MarksActivity"
             android:windowSoftInputMode="adjustResize" />
     </application>
 

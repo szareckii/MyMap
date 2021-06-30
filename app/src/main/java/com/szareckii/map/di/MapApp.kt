@@ -10,7 +10,7 @@ class MapApp : Application() {
         super.onCreate()
         startKoin {
             androidContext(applicationContext)
-            modules(listOf(application, mainScreen, favoritesScreen))
+            modules(listOf(application, mainScreen, marksScreen))
         }
     }
 }

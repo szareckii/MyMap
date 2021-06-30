@@ -4,14 +4,12 @@ import com.szareckii.map.model.data.DataModel
 
 class DataSource {
 
-
     var markers = mutableListOf(
         DataModel(
             "name",
             "description",
             100.000000,
-            100.000000,
-            false
+            100.000000
         )
     )
 

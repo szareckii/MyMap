@@ -13,6 +13,8 @@ abstract class BaseActivity<T : AppState> : AppCompatActivity() {
 
     abstract val model: BaseViewModel<T>
 
+    abstract fun setDataToAdapter(data: List<DataModel>)
+
     protected fun renderData(appState: T) {
         when (appState) {
             is AppState.Success -> {
@@ -24,7 +26,7 @@ abstract class BaseActivity<T : AppState> : AppCompatActivity() {
                             getString(R.string.empty_server_response_on_success)
                         )
                     } else {
-//                        setDataToAdapter(it)
+                        setDataToAdapter(it)
                     }
                 }
             }
