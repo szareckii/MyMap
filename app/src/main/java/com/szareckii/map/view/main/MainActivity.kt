@@ -1,21 +1,20 @@
 package com.szareckii.map.view.main
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Criteria
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
+import android.location.*
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.EditText
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -24,22 +23,19 @@ import com.szareckii.map.model.data.AppState
 import com.szareckii.map.view.base.BaseActivity
 import com.szareckii.map.view.favorites.FavoritesActivity
 import org.koin.android.viewmodel.ext.android.viewModel
+import java.io.IOException
 
 
-class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback  {
-
-    companion object {
-        private val PERMISSION_REQUEST_CODE = 10
-    }
-
-    private var textLatitude: EditText? = null
-    private var textLongitude: EditText? = null
+class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
+    GoogleMap.OnMyLocationButtonClickListener,
+    GoogleMap.OnMyLocationClickListener
+{
 
     override val model: MainViewModel by viewModel()
 
     private lateinit var mMap: GoogleMap
     private var currentMarker: Marker? = null
-    private var permissionDenied = false
+    private val markers = mutableListOf<Marker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,15 +45,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback  {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        initViews();
-        requestPemissions();
-
-    }
-
-    // Инициализация Views
-    private fun initViews() {
-//        textLatitude = findViewById(R.id.editLat)
-//        textLongitude = findViewById(R.id.editLng)
+        requestPemissions()
     }
 
     // Запрашиваем Permission’ы
@@ -113,10 +101,8 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback  {
                 override fun onLocationChanged(location: Location) {
                     val lat: Double = location.getLatitude() // Широта
                     val latitude = java.lang.Double.toString(lat)
-//                    textLatitude!!.setText(latitude)
                     val lng: Double = location.getLongitude() // Долгота
                     val longitude = java.lang.Double.toString(lng)
-//                    textLongitude!!.setText(longitude)
                     val accuracy = java.lang.Float.toString(location.getAccuracy()) // Точность
                     val currentPosition = LatLng(lat, lng)
                     currentMarker?.setPosition(currentPosition)
@@ -146,11 +132,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback  {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_addToFavorite -> {
-                startActivity(Intent(this, FavoritesActivity::class.java))
-                true
-            }
-            R.id.menu_favorites -> {
+              R.id.menu_favorites -> {
                 startActivity(Intent(this, FavoritesActivity::class.java))
                 true
             }
@@ -163,6 +145,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback  {
         return super.onCreateOptionsMenu(menu)
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap;
 
@@ -170,13 +153,44 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback  {
         currentMarker = mMap.addMarker( MarkerOptions().position(sydney).title("Текущая позиция"))
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-//
-//        mMap = googleMap ?: return
-//        googleMap.setOnMyLocationButtonClickListener(this)
-//        googleMap.setOnMyLocationClickListener(this)
-//        enableMyLocation()
 
+        mMap.isMyLocationEnabled = true
+        mMap.setOnMyLocationButtonClickListener(this)
+        mMap.setOnMyLocationClickListener(this)
+
+        mMap.setOnMapLongClickListener { latLng ->
+            addMarker(latLng)
+            getAddress(latLng)
+        }
     }
+
+    // Получаем адрес по координатам
+    private fun getAddress(location: LatLng) {
+        val geocoder = Geocoder(this)
+        // Поскольку Geocoder работает по интернету, создаём отдельный поток
+        Thread {
+            try {
+                val addresses: List<Address> =
+                    geocoder.getFromLocation(location.latitude, location.longitude, 1)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }.start()
+    }
+
+
+    // Добавляем метки на карту
+    private fun addMarker(location: LatLng) {
+        val title = markers.size.toString()
+        val marker = mMap.addMarker(
+            MarkerOptions()
+                .position(location)
+                .title(title)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker))
+                )
+        markers.add(marker)
+    }
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -191,6 +205,24 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback  {
                 requestLocation()
             }
         }
+    }
+
+    override fun onMyLocationClick(location: Location) {
+        Toast.makeText(this, "Current location:\n$location", Toast.LENGTH_LONG)
+            .show()
+    }
+
+    override fun onMyLocationButtonClick(): Boolean {
+        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT)
+            .show()
+        // Return false so that we don't consume the event and the default behavior still occurs
+        // (the camera animates to the user's current position).
+        return false
+    }
+
+
+    companion object {
+        private val PERMISSION_REQUEST_CODE = 10
     }
 
 }
