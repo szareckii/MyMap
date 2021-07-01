@@ -1,15 +1,11 @@
-package com.szareckii.map.view.favorites
+package com.szareckii.map.view.marks
 
 import android.R
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import kotlinx.android.synthetic.main.dialog_edit_mark.*
 
 
 class EditMarkDialogFragment : DialogFragment(), DialogInterface.OnClickListener {

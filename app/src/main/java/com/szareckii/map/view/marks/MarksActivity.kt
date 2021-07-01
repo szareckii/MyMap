@@ -1,4 +1,4 @@
-package com.szareckii.map.view.favorites
+package com.szareckii.map.view.marks
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -7,7 +7,7 @@ import com.szareckii.map.R
 import com.szareckii.map.model.data.AppState
 import com.szareckii.map.model.data.DataModel
 import com.szareckii.map.view.base.BaseActivity
-import com.szareckii.map.view.favorites.adapter.MarksAdapter
+import com.szareckii.map.view.marks.adapter.MarksAdapter
 import org.koin.android.viewmodel.ext.android.viewModel
 import kotlinx.android.synthetic.main.activity_favorites.*
 

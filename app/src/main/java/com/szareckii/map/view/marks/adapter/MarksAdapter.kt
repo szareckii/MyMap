@@ -1,4 +1,4 @@
-package com.szareckii.map.view.favorites.adapter
+package com.szareckii.map.view.marks.adapter
 
 import android.view.LayoutInflater
 import android.view.View

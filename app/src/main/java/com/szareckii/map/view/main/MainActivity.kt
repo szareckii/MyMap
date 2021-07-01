@@ -1,7 +1,6 @@
 package com.szareckii.map.view.main
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.*
@@ -10,6 +9,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -22,10 +23,9 @@ import com.szareckii.map.R
 import com.szareckii.map.model.data.AppState
 import com.szareckii.map.model.data.DataModel
 import com.szareckii.map.view.base.BaseActivity
-import com.szareckii.map.view.favorites.MarksActivity
-import com.szareckii.map.view.favorites.MarksViewModel
+import com.szareckii.map.view.marks.MarksActivity
+import com.szareckii.map.view.marks.MarksViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
-import java.io.IOException
 
 class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     GoogleMap.OnMyLocationButtonClickListener,
@@ -38,24 +38,27 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     private var currentMarker: Marker? = null
     private val markers = mutableListOf<Marker>()
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        requestPermissions()
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        requestPemissions()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
     }
 
     // Запрашиваем Permission’ы
-    private fun requestPemissions() {
+    private fun requestPermissions() {
         // Проверим, есть ли Permission’ы, и если их нет, запрашиваем их у
         // пользователя
         if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                this, Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
             || ActivityCompat.checkSelfPermission(
                 this,
@@ -83,36 +86,50 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) return
+
+        mMap.isMyLocationEnabled = true
+
+        mMap.setOnMyLocationButtonClickListener(this)
+        mMap.setOnMyLocationClickListener(this)
+
+        var currentLatLng = LatLng(55.558, 37.378)
+        fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
+            if (location != null) {
+                currentLatLng = LatLng(location.latitude, location.longitude)
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+            }
+        }
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng))
+
+        mMap.setOnMapLongClickListener { latLng ->
+            addMarker(latLng)
+        }
+
         // Получаем менеджер геолокаций
         val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         val criteria = Criteria()
         criteria.accuracy = Criteria.ACCURACY_COARSE
 
-        // Получаем наиболее подходящий провайдер геолокации по критериям.
-        // Но определить, какой провайдер использовать, можно и самостоятельно.
-        // В основном используются LocationManager.GPS_PROVIDER или
-        // LocationManager.NETWORK_PROVIDER, но можно использовать и
-        // LocationManager.PASSIVE_PROVIDER - для получения координат в
-        // пассивном режиме
         val provider = locationManager.getBestProvider(criteria, true)
         if (provider != null) {
             // Будем получать геоположение через каждые 10 секунд или каждые
             // 10 метров
-            locationManager.requestLocationUpdates(provider, 10000, 10f, object : LocationListener {
-                override fun onLocationChanged(location: Location) {
-                    val lat: Double = location.getLatitude() // Широта
-                    val latitude = java.lang.Double.toString(lat)
-                    val lng: Double = location.getLongitude() // Долгота
-                    val longitude = java.lang.Double.toString(lng)
-                    val accuracy = java.lang.Float.toString(location.getAccuracy()) // Точность
-                    val currentPosition = LatLng(lat, lng)
-                    currentMarker?.setPosition(currentPosition)
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 12.toFloat()))
-                }
+            locationManager.requestLocationUpdates(provider, 10000, 10f,
+                object : LocationListener {
+                    override fun onLocationChanged(location: Location) {
+                        val lat: Double = location.latitude // Широта
+                        val latitude = lat.toString()
+                        val lng: Double = location.longitude // Долгота
+                        val longitude = lng.toString()
+                        val accuracy = location.accuracy.toString() // Точность
+                        val currentPosition = LatLng(lat, lng)
+                        currentMarker?.position = currentPosition
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 12.toFloat()))
+                    }
 
-                override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-                override fun onProviderEnabled(provider: String) {}
-                override fun onProviderDisabled(provider: String) {}
+                    override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
+                    override fun onProviderEnabled(provider: String) {}
+                    override fun onProviderDisabled(provider: String) {}
             })
         }
     }
@@ -146,39 +163,14 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
         return super.onCreateOptionsMenu(menu)
     }
 
-    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap;
+        mMap = googleMap
 
-        val moscow = LatLng(55.558, 37.378);
+        val moscow = LatLng(55.558, 37.378)
         currentMarker = mMap.addMarker( MarkerOptions().position(moscow).title("Текущая позиция"))
-        mMap.addMarker(MarkerOptions().position(moscow).title("Marker in Moscow"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(moscow));
-
-        mMap.isMyLocationEnabled = true
-        mMap.setOnMyLocationButtonClickListener(this)
-        mMap.setOnMyLocationClickListener(this)
-
-        mMap.setOnMapLongClickListener { latLng ->
-            addMarker(latLng)
-//            getAddress(latLng)
-        }
+        mMap.addMarker(MarkerOptions().position(moscow).title("Marker in Moscow"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(moscow))
     }
-
-//    // Получаем адрес по координатам
-//    private fun getAddress(location: LatLng) {
-//        val geocoder = Geocoder(this)
-//        // Поскольку Geocoder работает по интернету, создаём отдельный поток
-//        Thread {
-//            try {
-//                val addresses: List<Address> =
-//                    geocoder.getFromLocation(location.latitude, location.longitude, 1)
-//            } catch (e: IOException) {
-//                e.printStackTrace()
-//            }
-//        }.start()
-//    }
-
 
     // Добавляем метки на карту
     private fun addMarker(location: LatLng) {
@@ -202,12 +194,9 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == PERMISSION_REQUEST_CODE) {   // Запрошенный нами
-            // Permission
             if (grantResults.size == 2 &&
                 (grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[1] == PackageManager.PERMISSION_GRANTED)
             ) {
-                // Все препоны пройдены и пермиссия дана
-                // Запросим координаты
                 requestLocation()
             }
         }
@@ -221,8 +210,6 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     override fun onMyLocationButtonClick(): Boolean {
         Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT)
             .show()
-        // Return false so that we don't consume the event and the default behavior still occurs
-        // (the camera animates to the user's current position).
         return false
     }
 

@@ -1,4 +1,4 @@
-package com.szareckii.map.view.favorites
+package com.szareckii.map.view.marks
 
 import com.szareckii.map.model.data.AppState
 import com.szareckii.map.model.data.DataModel
