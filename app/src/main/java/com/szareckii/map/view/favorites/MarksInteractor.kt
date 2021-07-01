@@ -6,14 +6,14 @@ import com.szareckii.map.model.repository.Repository
 import com.szareckii.map.viewmodel.Interactor
 
 class MarksInteractor(
-    private val repositoryLocal: Repository<List<DataModel>>
+    private val repositoryLocal: Repository<MutableList<DataModel>>
 ) : Interactor<AppState> {
 
     override suspend fun getData(): AppState {
         return AppState.Success(repositoryLocal.getData())
     }
 
-    override suspend fun saveData(lat: Double, lng: Double) {
-        return repositoryLocal.saveData("name", "description", lat, lng)
+    override suspend fun saveData(name : String, lat: Double, lng: Double) {
+        return repositoryLocal.saveData("Name$name", "description", lat, lng)
     }
 }
