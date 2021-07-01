@@ -9,7 +9,8 @@ import com.szareckii.map.R
 import com.szareckii.map.model.data.DataModel
 import kotlinx.android.synthetic.main.activity_favorites_recyclerview_item.view.*
 
-class MarksAdapter : RecyclerView.Adapter<MarksAdapter.RecyclerItemViewHolder>() {
+class MarksAdapter(private var onListItemClickListener: OnListItemClickListener) :
+    RecyclerView.Adapter<MarksAdapter.RecyclerItemViewHolder>() {
 
     private var data: MutableList<DataModel> = mutableListOf()
 
@@ -43,12 +44,14 @@ class MarksAdapter : RecyclerView.Adapter<MarksAdapter.RecyclerItemViewHolder>()
                 itemView.setOnClickListener {
                     Toast.makeText(itemView.context, "on click: ${data.name}", Toast.LENGTH_SHORT).show()
                 }
-                itemView.editItemImageView.setOnClickListener { editItem() }
+                itemView.editItemImageView.setOnClickListener { editItem(data) }
                 itemView.removeItemImageView.setOnClickListener { removeItem() }
             }
         }
-                private fun editItem() {
+
+                private fun editItem(listItemData : DataModel) {
 //                    data.add(layoutPosition, generateItem())
+                    onListItemClickListener.onItemClick(listItemData)
                     notifyItemChanged(layoutPosition)
                 }
 
@@ -56,5 +59,9 @@ class MarksAdapter : RecyclerView.Adapter<MarksAdapter.RecyclerItemViewHolder>()
                     data.removeAt(layoutPosition)
                     notifyItemRemoved(layoutPosition)
                 }
+    }
+
+    interface OnListItemClickListener {
+        fun onItemClick(listItemData: DataModel)
     }
 }

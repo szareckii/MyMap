@@ -2,6 +2,7 @@ package com.szareckii.map.view.favorites
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
 import com.szareckii.map.R
 import com.szareckii.map.model.data.AppState
 import com.szareckii.map.model.data.DataModel
@@ -15,7 +16,22 @@ class MarksActivity : BaseActivity<AppState>() {
 
     override val model: MarksViewModel by viewModel()
 
-    private val adapter: MarksAdapter by lazy { MarksAdapter() }
+    private val adapter: MarksAdapter by lazy { MarksAdapter(onListItemClickListener) }
+
+    private val onListItemClickListener: MarksAdapter.OnListItemClickListener =
+        object : MarksAdapter.OnListItemClickListener {
+            override fun onItemClick(data: DataModel) {
+                Toast.makeText(this@MarksActivity, data.description, Toast.LENGTH_SHORT).show()
+
+                EditMarkDialogFragment().show(supportFragmentManager, "dlg1")
+
+
+
+
+//                val dlg = EditMarkDialogFragment()
+//                dlg.show(supportFragmentManager, "dlg1")
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +72,7 @@ class MarksActivity : BaseActivity<AppState>() {
     }
 
     private fun iniViewModel() {
-        if (history_activity_recyclerview.adapter != null) {
+        if (marks_activity_recyclerview.adapter != null) {
             throw IllegalStateException("The ViewModel should be initialised first")
         }
         model.subscribe().observe(this@MarksActivity, { renderData(it) })
@@ -64,7 +80,7 @@ class MarksActivity : BaseActivity<AppState>() {
 
     // Инициализируем адаптер и передаем его в RecyclerView
     private fun initViews() {
-        history_activity_recyclerview.adapter = adapter
+        marks_activity_recyclerview.adapter = adapter
     }
 
 }

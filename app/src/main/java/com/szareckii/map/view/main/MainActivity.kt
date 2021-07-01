@@ -150,10 +150,10 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap;
 
-        val sydney = LatLng(-34.0, 151.0);
-        currentMarker = mMap.addMarker( MarkerOptions().position(sydney).title("Текущая позиция"))
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        val moscow = LatLng(55.558, 37.378);
+        currentMarker = mMap.addMarker( MarkerOptions().position(moscow).title("Текущая позиция"))
+        mMap.addMarker(MarkerOptions().position(moscow).title("Marker in Moscow"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(moscow));
 
         mMap.isMyLocationEnabled = true
         mMap.setOnMyLocationButtonClickListener(this)
