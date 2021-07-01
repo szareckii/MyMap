@@ -150,7 +150,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap;
 
-        val sydney: LatLng = LatLng(-34.0, 151.0);
+        val sydney = LatLng(-34.0, 151.0);
         currentMarker = mMap.addMarker( MarkerOptions().position(sydney).title("Текущая позиция"))
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
@@ -161,23 +161,23 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
 
         mMap.setOnMapLongClickListener { latLng ->
             addMarker(latLng)
-            getAddress(latLng)
+//            getAddress(latLng)
         }
     }
 
-    // Получаем адрес по координатам
-    private fun getAddress(location: LatLng) {
-        val geocoder = Geocoder(this)
-        // Поскольку Geocoder работает по интернету, создаём отдельный поток
-        Thread {
-            try {
-                val addresses: List<Address> =
-                    geocoder.getFromLocation(location.latitude, location.longitude, 1)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }.start()
-    }
+//    // Получаем адрес по координатам
+//    private fun getAddress(location: LatLng) {
+//        val geocoder = Geocoder(this)
+//        // Поскольку Geocoder работает по интернету, создаём отдельный поток
+//        Thread {
+//            try {
+//                val addresses: List<Address> =
+//                    geocoder.getFromLocation(location.latitude, location.longitude, 1)
+//            } catch (e: IOException) {
+//                e.printStackTrace()
+//            }
+//        }.start()
+//    }
 
 
     // Добавляем метки на карту
@@ -194,7 +194,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
         val lat: Double = location.latitude // Широта
         val lng: Double = location.longitude // Долгота
 
-        model.saveData(lat, lng)
+        model.saveData(title, lat, lng)
     }
 
 
@@ -231,7 +231,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
         private val PERMISSION_REQUEST_CODE = 10
     }
 
-    override fun setDataToAdapter(data: List<DataModel>) {
+    override fun setDataToAdapter(data: MutableList<DataModel>) {
     }
 
 }

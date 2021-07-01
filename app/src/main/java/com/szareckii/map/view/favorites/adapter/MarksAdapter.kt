@@ -11,9 +11,10 @@ import kotlinx.android.synthetic.main.activity_favorites_recyclerview_item.view.
 
 class MarksAdapter : RecyclerView.Adapter<MarksAdapter.RecyclerItemViewHolder>() {
 
-    private var data: List<DataModel> = arrayListOf()
+    private var data: MutableList<DataModel> = mutableListOf()
+
     // Метод передачи данных в адаптер
-    fun setData(data: List<DataModel>) {
+    fun setData(data: MutableList<DataModel>) {
         this.data = data
         notifyDataSetChanged()
     }
@@ -37,11 +38,23 @@ class MarksAdapter : RecyclerView.Adapter<MarksAdapter.RecyclerItemViewHolder>()
 
         fun bind(data: DataModel) {
             if (layoutPosition != RecyclerView.NO_POSITION) {
-                itemView.header_history_textview_recycler_item.text = data.name
+                itemView.headerMarkItemTextView.text = data.name
+                itemView.descriptionMarkItemTextView.text = data.description
                 itemView.setOnClickListener {
                     Toast.makeText(itemView.context, "on click: ${data.name}", Toast.LENGTH_SHORT).show()
                 }
+                itemView.editItemImageView.setOnClickListener { editItem() }
+                itemView.removeItemImageView.setOnClickListener { removeItem() }
             }
         }
+                private fun editItem() {
+//                    data.add(layoutPosition, generateItem())
+                    notifyItemChanged(layoutPosition)
+                }
+
+                private fun removeItem() {
+                    data.removeAt(layoutPosition)
+                    notifyItemRemoved(layoutPosition)
+                }
     }
 }

@@ -13,7 +13,7 @@ abstract class BaseActivity<T : AppState> : AppCompatActivity() {
 
     abstract val model: BaseViewModel<T>
 
-    abstract fun setDataToAdapter(data: List<DataModel>)
+    abstract fun setDataToAdapter(data: MutableList<DataModel>)
 
     protected fun renderData(appState: T) {
         when (appState) {

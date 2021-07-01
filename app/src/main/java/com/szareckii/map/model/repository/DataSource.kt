@@ -4,16 +4,6 @@ import com.szareckii.map.model.data.DataModel
 
 class DataSource {
 
-    var markers = mutableListOf(
-        DataModel(
-            "name",
-            "description",
-            100.000000,
-            100.000000
-        )
-    )
+    val markers = mutableListOf<DataModel>()
 
-//    fun addPlace(place: DataModel) {
-//        markers.add(place)
-//    }
 }

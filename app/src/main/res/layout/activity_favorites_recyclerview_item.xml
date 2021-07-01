@@ -1,24 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:id="@+id/error_linear_layout"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_marginTop="@dimen/margin_medium"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/header_history_textview_recycler_item"
-        android:layout_width="wrap_content"
-        android:layout_marginStart="@dimen/margin_medium"
-        android:layout_height="wrap_content"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/markImageView"
+        android:layout_width="80dp"
+        android:layout_height="92dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_marker_xml" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/headerMarkItemTextView"
         style="@style/HeaderTextStyle"
-        tools:text="Header"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/markImageView"
+        app:layout_constraintStart_toEndOf="@+id/markImageView"
+        app:layout_constraintTop_toTopOf="@+id/markImageView"
+        app:layout_constraintVertical_bias="0.2"
+        tools:text="Name" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/descriptionMarkItemTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/markImageView"
+        app:layout_constraintStart_toEndOf="@+id/markImageView"
+        app:layout_constraintTop_toBottomOf="@+id/headerMarkItemTextView"
+        tools:text="Description" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/editItemImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_edit" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/removeItemImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editItemImageView"
+        app:srcCompat="@drawable/ic_delete" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/hairline"
-        android:layout_marginTop="@dimen/margin_small"
-        android:background="@color/color_gray"/>
-</LinearLayout>
+        android:layout_height="1px"
+        android:layout_marginTop="24dp"
+        android:background="#000"
+        app:layout_constraintBottom_toBottomOf="@+id/descriptionMarkItemTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/markImageView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

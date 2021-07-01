@@ -33,7 +33,7 @@ class MarksActivity : BaseActivity<AppState>() {
     }
 
     // Вызовется из базовой Activity, когда данные будут готовы
-    override fun setDataToAdapter(data: List<DataModel>) {
+    override fun setDataToAdapter(data: MutableList<DataModel>) {
         adapter.setData(data)
     }
 
