@@ -19,11 +19,11 @@ class MarksViewModel(private val interactor: MarksInteractor) : BaseViewModel<Ap
         viewModelCoroutineScope.launch { startInteractor() }
     }
 
-    fun saveData(name: String, latitude: Double, longitude: Double) {
+    fun saveData(index: Int, name: String, latitude: Double, longitude: Double) {
         _mutableLiveData.value = AppState.Loading(null)
         cancelJob()
         viewModelCoroutineScope.launch {
-            interactor.saveData(name, latitude, longitude) }
+            interactor.saveData(index, name, latitude, longitude) }
     }
 
 //    fun editData(id: Int, name: String, description: String) {

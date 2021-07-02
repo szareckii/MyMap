@@ -13,8 +13,8 @@ class MarksInteractor(
         return AppState.Success(repositoryLocal.getData())
     }
 
-    override suspend fun saveData(name: String, latitude: Double, longitude: Double) {
-        return repositoryLocal.saveData("Name$name", "description", latitude, longitude)
+    override suspend fun saveData(index: Int, name: String, latitude: Double, longitude: Double) {
+        return repositoryLocal.saveData(index,"Name$name", "description", latitude, longitude)
     }
 
     override suspend fun editData(name: String, description: String) {

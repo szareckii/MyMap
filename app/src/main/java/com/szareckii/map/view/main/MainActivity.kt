@@ -206,6 +206,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
 
     // Добавляем метки на карту
     private fun addMarker(location: LatLng) {
+        val index = markers.size
         val title = markers.size.toString()
         val marker = mMap.addMarker(
             MarkerOptions()
@@ -218,7 +219,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
         val lat: Double = location.latitude // Широта
         val lng: Double = location.longitude // Долгота
 
-        model.saveData(title, lat, lng)
+        model.saveData(index, title, lat, lng)
     }
 
 
