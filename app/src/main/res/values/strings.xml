@@ -17,6 +17,6 @@
     <string name="image_stub">image</string>
     <string name="menu_title_favorites">Markers</string>
     <string name="menu_title_addToFavorite">Add marker</string>
-    <string name="name_hint">Edit name mark</string>
-    <string name="description_hint">Edit description mark</string>
+    <string name="name_hint">Name mark</string>
+    <string name="description_hint">Description mark</string>
 </resources>

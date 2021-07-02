@@ -37,6 +37,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     private lateinit var mMap: GoogleMap
     private var currentMarker: Marker? = null
     private val markers = mutableListOf<Marker>()
+    var requestPermissions = 0
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -87,24 +88,25 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
             ) != PackageManager.PERMISSION_GRANTED
         ) return
 
-        mMap.isMyLocationEnabled = true
+        if (requestPermissions == 1) {
+            mMap.isMyLocationEnabled = true
 
-        mMap.setOnMyLocationButtonClickListener(this)
-        mMap.setOnMyLocationClickListener(this)
+            mMap.setOnMyLocationButtonClickListener(this)
+            mMap.setOnMyLocationClickListener(this)
 
-        var currentLatLng = LatLng(55.558, 37.378)
-        fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
-            if (location != null) {
-                currentLatLng = LatLng(location.latitude, location.longitude)
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+            var currentLatLng = LatLng(55.558, 37.378)
+            fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
+                if (location != null) {
+                    currentLatLng = LatLng(location.latitude, location.longitude)
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                }
+            }
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng))
+
+            mMap.setOnMapLongClickListener { latLng ->
+                addMarker(latLng)
             }
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng))
-
-        mMap.setOnMapLongClickListener { latLng ->
-            addMarker(latLng)
-        }
-
         // Получаем менеджер геолокаций
         val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         val criteria = Criteria()
@@ -170,6 +172,36 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
         currentMarker = mMap.addMarker( MarkerOptions().position(moscow).title("Текущая позиция"))
         mMap.addMarker(MarkerOptions().position(moscow).title("Marker in Moscow"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(moscow))
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        if (requestPermissions == 0) {
+            mMap.isMyLocationEnabled = true
+
+            mMap.setOnMyLocationButtonClickListener(this)
+            mMap.setOnMyLocationClickListener(this)
+
+            var currentLatLng = LatLng(55.558, 37.378)
+            fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
+                if (location != null) {
+                    currentLatLng = LatLng(location.latitude, location.longitude)
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                }
+            }
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng))
+
+            mMap.setOnMapLongClickListener { latLng ->
+                addMarker(latLng)
+            }
+        }
     }
 
     // Добавляем метки на карту
@@ -197,6 +229,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
             if (grantResults.size == 2 &&
                 (grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[1] == PackageManager.PERMISSION_GRANTED)
             ) {
+                requestPermissions = 1
                 requestLocation()
             }
         }

@@ -8,8 +8,8 @@ import com.szareckii.map.model.data.AppState
 import com.szareckii.map.model.data.DataModel
 import com.szareckii.map.view.base.BaseActivity
 import com.szareckii.map.view.marks.adapter.MarksAdapter
-import org.koin.android.viewmodel.ext.android.viewModel
 import kotlinx.android.synthetic.main.activity_favorites.*
+import org.koin.android.viewmodel.ext.android.viewModel
 
 
 class MarksActivity : BaseActivity<AppState>() {
@@ -23,13 +23,12 @@ class MarksActivity : BaseActivity<AppState>() {
             override fun onItemClick(data: DataModel) {
                 Toast.makeText(this@MarksActivity, data.description, Toast.LENGTH_SHORT).show()
 
-                EditMarkDialogFragment().show(supportFragmentManager, "dlg1")
-
-
-
-
-//                val dlg = EditMarkDialogFragment()
-//                dlg.show(supportFragmentManager, "dlg1")
+                val editMarkDialog = EditMarkDialogFragment()
+                val args = Bundle()
+                args.putString("name", data.name)
+                args.putString("description", data.description)
+                editMarkDialog.arguments = args
+                editMarkDialog.show(supportFragmentManager, "dlg1")
             }
         }
 
