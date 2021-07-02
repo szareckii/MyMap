@@ -11,8 +11,7 @@ import com.szareckii.map.view.marks.adapter.MarksAdapter
 import kotlinx.android.synthetic.main.activity_favorites.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
-
-class MarksActivity : BaseActivity<AppState>() {
+class MarksActivity : BaseActivity<AppState>(), MarkEditable {
 
     override val model: MarksViewModel by viewModel()
 
@@ -80,6 +79,10 @@ class MarksActivity : BaseActivity<AppState>() {
     // Инициализируем адаптер и передаем его в RecyclerView
     private fun initViews() {
         marks_activity_recyclerview.adapter = adapter
+    }
+
+    override fun edit(name: String, description: String) {
+        model.editData(name, description)
     }
 
 }

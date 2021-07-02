@@ -1,5 +1,6 @@
 package com.szareckii.map.view.marks
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +8,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.szareckii.map.R
 import kotlinx.android.synthetic.main.dialog_edit_mark.view.*
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class EditMarkDialogFragment : DialogFragment() {
+
+    val model: MarksViewModel by viewModel()
+
+    private var markEditable: MarkEditable? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+            markEditable = context as MarkEditable
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         dialog!!.window?.setBackgroundDrawableResource(R.drawable.round_corner)
@@ -22,7 +33,7 @@ class EditMarkDialogFragment : DialogFragment() {
         rootView.cancel_button.setOnClickListener { dialog!!.dismiss() }
 
         rootView.ok_button.setOnClickListener {
-
+            markEditable?.edit(rootView.name_edit_text.toString(), rootView.description_edit_text.toString())
             dialog!!.dismiss()
         }
 

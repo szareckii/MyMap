@@ -4,5 +4,5 @@ interface Interactor<T> {
 
     suspend fun getData(): T
     suspend fun saveData(name : String, latitude : Double, longitude : Double)
-    suspend fun editData(id: Int, name: String, description: String)
+    suspend fun editData(name: String, description: String)
 }

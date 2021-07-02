@@ -24,4 +24,8 @@ class RepositoryImplementation(private val dataSource: MutableList<DataModel>) :
         dataSource[index].name = name
         dataSource[index].description = description
     }
+
+    override suspend fun getSizeData(): Int {
+        return dataSource.size
+    }
 }
