@@ -5,8 +5,6 @@ import com.szareckii.map.model.data.DataModel
 class RepositoryImplementation(private val dataSource: MutableList<DataModel>) :
     Repository<List<DataModel>> {
 
-//    var markers = dataSource
-
     override suspend fun getData(): List<DataModel> {
         return dataSource
     }
@@ -19,8 +17,14 @@ class RepositoryImplementation(private val dataSource: MutableList<DataModel>) :
     }
 
     override suspend fun editData(index: Int, name: String, description: String) {
-        dataSource[index].name = name
-        dataSource[index].description = description
+
+        for (i in dataSource) {
+            if(i.id == index) {
+                i.name = name
+                i.description = description
+                break
+            }
+        }
     }
 
     override suspend fun getSizeData(): Int {
