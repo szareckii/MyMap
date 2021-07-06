@@ -21,10 +21,11 @@ class EditMarkDialogFragment : DialogFragment() {
             markEditable = context as MarkEditable
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         dialog!!.window?.setBackgroundDrawableResource(R.drawable.round_corner)
         val rootView: View = inflater.inflate(R.layout.dialog_edit_mark, container, false)
 
+        val index = arguments?.getInt("index")?:0
         val name = arguments?.getString("name")
         val description = arguments?.getString("description")
         rootView.name_edit_text.setText(name)
@@ -33,7 +34,7 @@ class EditMarkDialogFragment : DialogFragment() {
         rootView.cancel_button.setOnClickListener { dialog!!.dismiss() }
 
         rootView.ok_button.setOnClickListener {
-            markEditable?.edit(rootView.name_edit_text.toString(), rootView.description_edit_text.toString())
+            markEditable?.edit(index, rootView.name_edit_text.text.toString(), rootView.description_edit_text.text.toString())
             dialog!!.dismiss()
         }
 

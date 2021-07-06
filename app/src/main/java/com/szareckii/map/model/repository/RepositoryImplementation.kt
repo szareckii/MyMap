@@ -11,16 +11,14 @@ class RepositoryImplementation(private val dataSource: MutableList<DataModel>) :
         return dataSource
     }
 
-    override suspend fun saveData(name: String, description: String, lat: Double, lng: Double) {
+    override suspend fun saveData(
+        index: Int, name: String, description: String, lat: Double, lng: Double) {
 
         val place = DataModel(dataSource.size, name, description, lat, lng)
         dataSource.add(place)
     }
 
-    override suspend fun editData(id: Int, name: String, description: String) {
-
-        val index = dataSource.indexOf(DataModel(id))
-
+    override suspend fun editData(index: Int, name: String, description: String) {
         dataSource[index].name = name
         dataSource[index].description = description
     }

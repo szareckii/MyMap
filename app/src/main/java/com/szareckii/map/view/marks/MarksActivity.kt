@@ -19,13 +19,14 @@ class MarksActivity : BaseActivity<AppState>(), MarkEditable {
 
     private val onListItemClickListener: MarksAdapter.OnListItemClickListener =
         object : MarksAdapter.OnListItemClickListener {
-            override fun onItemClick(data: DataModel) {
-                Toast.makeText(this@MarksActivity, data.description, Toast.LENGTH_SHORT).show()
+            override fun onItemClick(listItemData: DataModel) {
+                Toast.makeText(this@MarksActivity, listItemData.description, Toast.LENGTH_SHORT).show()
 
                 val editMarkDialog = EditMarkDialogFragment()
                 val args = Bundle()
-                args.putString("name", data.name)
-                args.putString("description", data.description)
+                args.putInt("index", listItemData.id)
+                args.putString("name", listItemData.name)
+                args.putString("description", listItemData.description)
                 editMarkDialog.arguments = args
                 editMarkDialog.show(supportFragmentManager, "dlg1")
             }
@@ -81,8 +82,8 @@ class MarksActivity : BaseActivity<AppState>(), MarkEditable {
         marks_activity_recyclerview.adapter = adapter
     }
 
-    override fun edit(name: String, description: String) {
-        model.editData(name, description)
+    override fun edit(index: Int, name: String, description: String) {
+        model.editData(index, name, description)
     }
 
 }

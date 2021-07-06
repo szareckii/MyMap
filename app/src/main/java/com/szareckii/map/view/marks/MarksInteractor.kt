@@ -17,8 +17,7 @@ class MarksInteractor(
         return repositoryLocal.saveData(index,"Name$name", "description", latitude, longitude)
     }
 
-    override suspend fun editData(name: String, description: String) {
-        val size = repositoryLocal.getSizeData()
-        return repositoryLocal.editData(size, name, description)
+    override suspend fun editData(index: Int, name: String, description: String) {
+        return repositoryLocal.editData(index, name, description)
     }
 }

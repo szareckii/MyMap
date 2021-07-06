@@ -14,15 +14,13 @@ val application = module {
 
     single<Repository<List<DataModel>>> {
         RepositoryImplementation(DataSource().markers) }
-//        RepositoryImplementation(DataSource().markers) }
 }
 
-val mainScreen = module {
-    viewModel { MainViewModel() }
-}
+//val mainScreen = module {
+//    viewModel { MainViewModel() }
+//}
 
 val marksScreen = module {
-//    viewModel { MarksViewModel() }
     factory { MarksInteractor(get()) }
     viewModel { MarksViewModel(get()) }
 }
