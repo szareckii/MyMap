@@ -45,23 +45,23 @@ class MarksAdapter(private var onListItemClickListener: OnListItemClickListener)
                     Toast.makeText(itemView.context, "on click: ${data.name}", Toast.LENGTH_SHORT).show()
                 }
                 itemView.editItemImageView.setOnClickListener { editItem(data) }
-                itemView.removeItemImageView.setOnClickListener { removeItem() }
+                itemView.removeItemImageView.setOnClickListener { deleteItem(data) }
             }
         }
 
                 private fun editItem(listItemData : DataModel) {
-//                    data.add(layoutPosition, generateItem())
                     onListItemClickListener.onItemClick(listItemData)
                     notifyItemChanged(layoutPosition)
                 }
 
-                private fun removeItem() {
-                    data.removeAt(layoutPosition)
+                private fun deleteItem(listItemData : DataModel) {
+                    onListItemClickListener.onDeleteItemClick(listItemData)
                     notifyItemRemoved(layoutPosition)
                 }
     }
 
     interface OnListItemClickListener {
         fun onItemClick(listItemData: DataModel)
+        fun onDeleteItemClick(listItemData: DataModel)
     }
 }

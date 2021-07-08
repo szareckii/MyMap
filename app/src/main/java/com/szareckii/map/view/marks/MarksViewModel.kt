@@ -2,15 +2,21 @@ package com.szareckii.map.view.marks
 
 import androidx.lifecycle.LiveData
 import com.szareckii.map.model.data.AppState
+import com.szareckii.map.model.data.DataModel
 import com.szareckii.map.viewmodel.BaseViewModel
 import kotlinx.coroutines.launch
 
 class MarksViewModel(private val interactor: MarksInteractor) : BaseViewModel<AppState>() {
 
     private val liveDataForViewToObserve: LiveData<AppState> = _mutableLiveData
+    private val liveDataMarksForViewToObserve: LiveData<DataModel> = _mutableLiveDataMarks
 
     fun subscribe(): LiveData<AppState> {
         return liveDataForViewToObserve
+    }
+
+    fun subscribeMarks(): LiveData<DataModel> {
+        return liveDataMarksForViewToObserve
     }
 
     override fun getData() {
@@ -33,6 +39,16 @@ class MarksViewModel(private val interactor: MarksInteractor) : BaseViewModel<Ap
             interactor.editData(index, name, description)
             startInteractor()
         }
+    }
+
+    fun deleteData(data : DataModel) {
+        _mutableLiveData.value = AppState.Loading(null)
+        cancelJob()
+        viewModelCoroutineScope.launch {
+            interactor.deleteData(data)
+            startInteractor()
+        }
+        _mutableLiveDataMarks.value = data
     }
 
     private suspend fun startInteractor() {

@@ -7,6 +7,7 @@ import android.location.*
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -25,6 +26,7 @@ import com.szareckii.map.model.data.DataModel
 import com.szareckii.map.view.base.BaseActivity
 import com.szareckii.map.view.marks.MarksActivity
 import com.szareckii.map.view.marks.MarksViewModel
+import kotlinx.android.synthetic.main.loading_layout.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
@@ -52,7 +54,25 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
         mapFragment.getMapAsync(this)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        model.subscribeMarks().observe(this@MainActivity, {
+                    println("!!!!!!!!!!!!!!!!!!!!!!!1111111111111111111")
+
+                            for(i in markers) {
+//                                for(j in it) {
+                                    if (i.title.toInt() == it.id) {
+                                        markers.remove(i)
+                                    }
+//                                }
+                            }
+        })
+
+        model.subscribeMarks().observeForever {
+            println("!!!!!!!!!!!!!!!!!!!!!!!222222222222222")
+        }
+
     }
+
 
     // Запрашиваем Permission’ы
     private fun requestPermissions() {
@@ -213,7 +233,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
                 .position(location)
                 .title(title)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker))
-                )
+        )
         markers.add(marker)
 
         val lat: Double = location.latitude // Широта
@@ -226,7 +246,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (requestCode == PERMISSION_REQUEST_CODE) {   // Запрошенный нами
+        if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.size == 2 &&
                 (grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[1] == PackageManager.PERMISSION_GRANTED)
             ) {
@@ -246,7 +266,6 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
             .show()
         return false
     }
-
 
     companion object {
         private val PERMISSION_REQUEST_CODE = 10

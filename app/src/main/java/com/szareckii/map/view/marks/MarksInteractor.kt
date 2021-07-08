@@ -20,4 +20,8 @@ class MarksInteractor(
     override suspend fun editData(index: Int, name: String, description: String) {
         return repositoryLocal.editData(index, name, description)
     }
+
+    override suspend fun deleteData(data: DataModel) {
+        return repositoryLocal.deleteData(data)
+    }
 }

@@ -30,6 +30,11 @@ class MarksActivity : BaseActivity<AppState>(), MarkEditable {
                 editMarkDialog.arguments = args
                 editMarkDialog.show(supportFragmentManager, "dlg1")
             }
+
+            override fun onDeleteItemClick(listItemData: DataModel) {
+//                deleteData(listItemData.id)
+                deleteData(listItemData)
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,6 +89,10 @@ class MarksActivity : BaseActivity<AppState>(), MarkEditable {
 
     override fun edit(index: Int, name: String, description: String) {
         model.editData(index, name, description)
+    }
+
+    fun deleteData(data : DataModel) {
+        model.deleteData(data)
     }
 
 }

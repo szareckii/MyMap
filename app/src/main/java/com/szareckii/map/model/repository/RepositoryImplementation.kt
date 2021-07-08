@@ -10,7 +10,8 @@ class RepositoryImplementation(private val dataSource: MutableList<DataModel>) :
     }
 
     override suspend fun saveData(
-        index: Int, name: String, description: String, lat: Double, lng: Double) {
+        index: Int, name: String, description: String, lat: Double, lng: Double
+    ) {
 
         val place = DataModel(dataSource.size, name, description, lat, lng)
         dataSource.add(place)
@@ -30,4 +31,9 @@ class RepositoryImplementation(private val dataSource: MutableList<DataModel>) :
     override suspend fun getSizeData(): Int {
         return dataSource.size
     }
+
+    override suspend fun deleteData(data: DataModel) {
+        dataSource.remove(data)
+    }
+
 }
