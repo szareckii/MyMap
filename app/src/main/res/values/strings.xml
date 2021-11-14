@@ -19,4 +19,6 @@
     <string name="menu_title_addToFavorite">Add marker</string>
     <string name="name_hint">Name mark</string>
     <string name="description_hint">Description mark</string>
+    <string name="moskow_marker">Marker in Moscow</string>
+    <string name="current_position">Текущая позиция</string>
 </resources>

@@ -10,6 +10,10 @@ import com.szareckii.map.R
 import kotlinx.android.synthetic.main.dialog_edit_mark.view.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
+private const val INDEX = "com.szareckii.map.view.marks.index"
+private const val NAME = "com.szareckii.map.view.marks.name"
+private const val DESCRIPTION = "com.szareckii.map.view.marks.description"
+
 class EditMarkDialogFragment : DialogFragment() {
 
     val model: MarksViewModel by viewModel()
@@ -25,9 +29,9 @@ class EditMarkDialogFragment : DialogFragment() {
         dialog!!.window?.setBackgroundDrawableResource(R.drawable.round_corner)
         val rootView: View = inflater.inflate(R.layout.dialog_edit_mark, container, false)
 
-        val index = arguments?.getInt("index")?:0
-        val name = arguments?.getString("name")
-        val description = arguments?.getString("description")
+        val index = arguments?.getInt(INDEX)?:0
+        val name = arguments?.getString(NAME)
+        val description = arguments?.getString(DESCRIPTION)
         rootView.name_edit_text.setText(name)
         rootView.description_edit_text.setText(description)
 

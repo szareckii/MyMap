@@ -15,10 +15,6 @@ class MarksViewModel(private val interactor: MarksInteractor) : BaseViewModel<Ap
         return liveDataForViewToObserve
     }
 
-    fun subscribeMarks(): LiveData<DataModel> {
-        return liveDataMarksForViewToObserve
-    }
-
     override fun getData() {
         _mutableLiveData.value = AppState.Loading(null)
         cancelJob()
@@ -42,12 +38,11 @@ class MarksViewModel(private val interactor: MarksInteractor) : BaseViewModel<Ap
     }
 
     fun deleteData(data : DataModel) {
-        _mutableLiveData.value = AppState.Loading(null)
         cancelJob()
         viewModelCoroutineScope.launch {
             interactor.deleteData(data)
-            startInteractor()
         }
+
         _mutableLiveDataMarks.value = data
     }
 

@@ -11,6 +11,11 @@ import com.szareckii.map.view.marks.adapter.MarksAdapter
 import kotlinx.android.synthetic.main.activity_favorites.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
+private const val TAG = "dlg1"
+private const val INDEX = "com.szareckii.map.view.marks.index"
+private const val NAME = "com.szareckii.map.view.marks.name"
+private const val DESCRIPTION = "com.szareckii.map.view.marks.description"
+
 class MarksActivity : BaseActivity<AppState>(), MarkEditable {
 
     override val model: MarksViewModel by viewModel()
@@ -24,11 +29,11 @@ class MarksActivity : BaseActivity<AppState>(), MarkEditable {
 
                 val editMarkDialog = EditMarkDialogFragment()
                 val args = Bundle()
-                args.putInt("index", listItemData.id)
-                args.putString("name", listItemData.name)
-                args.putString("description", listItemData.description)
+                args.putInt(INDEX, listItemData.id)
+                args.putString(NAME, listItemData.name)
+                args.putString(DESCRIPTION, listItemData.description)
                 editMarkDialog.arguments = args
-                editMarkDialog.show(supportFragmentManager, "dlg1")
+                editMarkDialog.show(supportFragmentManager, TAG)
             }
 
             override fun onDeleteItemClick(listItemData: DataModel) {
@@ -50,7 +55,7 @@ class MarksActivity : BaseActivity<AppState>(), MarkEditable {
     override fun onResume() {
         super.onResume()
         model.getData()
-    }
+}
 
     // Вызовется из базовой Activity, когда данные будут готовы
     override fun setDataToAdapter(data: MutableList<DataModel>) {

@@ -48,7 +48,7 @@ abstract class BaseActivity<T : AppState> : AppCompatActivity() {
         }
     }
 
-    protected fun showAlertDialog(title: String?, message: String?) {
+    private fun showAlertDialog(title: String?, message: String?) {
         AlertDialogFragment.newInstance(title, message).show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
     }
 

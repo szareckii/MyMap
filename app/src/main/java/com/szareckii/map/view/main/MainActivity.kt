@@ -7,7 +7,6 @@ import android.location.*
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -29,6 +28,10 @@ import com.szareckii.map.view.marks.MarksViewModel
 import kotlinx.android.synthetic.main.loading_layout.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
+private const val LATITUDE_DEFAULT = 55.558
+private const val LONGITUDE_DEFAULT = 37.378
+private const val ZOOM_DEFAULT = 12f
+
 class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     GoogleMap.OnMyLocationButtonClickListener,
     GoogleMap.OnMyLocationClickListener
@@ -39,6 +42,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     private lateinit var mMap: GoogleMap
     private var currentMarker: Marker? = null
     private val markers = mutableListOf<Marker>()
+
     var requestPermissions = 0
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -55,35 +59,41 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        model.subscribeMarks().observe(this@MainActivity, {
-                    println("!!!!!!!!!!!!!!!!!!!!!!!1111111111111111111")
-
-                            for(i in markers) {
-//                                for(j in it) {
-                                    if (i.title.toInt() == it.id) {
-                                        markers.remove(i)
+        model.subscribe().observe(this@MainActivity, { appState ->
+            when (appState) {
+                is AppState.Success -> {
+                    val marks = appState.data
+                    marks?.let {
+                            for(index in marks.indices) {
+                                var p = -1
+                                for(j in markers) {
+                                    if (marks[index].id == j.title?.toInt() ?: 0) {
+                                        p = index
                                     }
-//                                }
-                            }
+                             }
+                              if(p != -1) {
+                                  markers.removeAt(index)
+                                  break
+                              }
+                        }
+                    }
+                }
+            }
         })
-
-        model.subscribeMarks().observeForever {
-            println("!!!!!!!!!!!!!!!!!!!!!!!222222222222222")
-        }
-
     }
 
+    override fun onResume() {
+        super.onResume()
+        model.getData()
+    }
 
     // Запрашиваем Permission’ы
     private fun requestPermissions() {
         // Проверим, есть ли Permission’ы, и если их нет, запрашиваем их у
         // пользователя
-        if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
-            || ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
+            || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             // Запрашиваем координаты
@@ -114,11 +124,11 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
             mMap.setOnMyLocationButtonClickListener(this)
             mMap.setOnMyLocationClickListener(this)
 
-            var currentLatLng = LatLng(55.558, 37.378)
+            var currentLatLng = LatLng(LATITUDE_DEFAULT, LONGITUDE_DEFAULT)
             fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
                 if (location != null) {
                     currentLatLng = LatLng(location.latitude, location.longitude)
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, ZOOM_DEFAULT))
                 }
             }
             mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng))
@@ -134,8 +144,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
 
         val provider = locationManager.getBestProvider(criteria, true)
         if (provider != null) {
-            // Будем получать геоположение через каждые 10 секунд или каждые
-            // 10 метров
+            // Будем получать геоположение через каждые 10 секунд или каждые 10 метров
             locationManager.requestLocationUpdates(provider, 10000, 10f,
                 object : LocationListener {
                     override fun onLocationChanged(location: Location) {
@@ -146,7 +155,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
                         val accuracy = location.accuracy.toString() // Точность
                         val currentPosition = LatLng(lat, lng)
                         currentMarker?.position = currentPosition
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 12.toFloat()))
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, ZOOM_DEFAULT))
                     }
 
                     override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
@@ -188,9 +197,9 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        val moscow = LatLng(55.558, 37.378)
-        currentMarker = mMap.addMarker( MarkerOptions().position(moscow).title("Текущая позиция"))
-        mMap.addMarker(MarkerOptions().position(moscow).title("Marker in Moscow"))
+        val moscow = LatLng(LATITUDE_DEFAULT, LONGITUDE_DEFAULT)
+        currentMarker = mMap.addMarker( MarkerOptions().position(moscow).title(getString(R.string.current_position)))
+        mMap.addMarker(MarkerOptions().position(moscow).title(getString(R.string.moskow_marker)))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(moscow))
 
         if (ActivityCompat.checkSelfPermission(
@@ -209,11 +218,11 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
             mMap.setOnMyLocationButtonClickListener(this)
             mMap.setOnMyLocationClickListener(this)
 
-            var currentLatLng = LatLng(55.558, 37.378)
+            var currentLatLng = LatLng(LATITUDE_DEFAULT, LONGITUDE_DEFAULT)
             fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
                 if (location != null) {
                     currentLatLng = LatLng(location.latitude, location.longitude)
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, ZOOM_DEFAULT))
                 }
             }
             mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng))
@@ -234,14 +243,15 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
                 .title(title)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker))
         )
-        markers.add(marker)
+        marker?.let {
+            markers.add(it)
+        }
 
         val lat: Double = location.latitude // Широта
         val lng: Double = location.longitude // Долгота
 
         model.saveData(index, title, lat, lng)
     }
-
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -268,7 +278,7 @@ class MainActivity : BaseActivity<AppState>(), OnMapReadyCallback,
     }
 
     companion object {
-        private val PERMISSION_REQUEST_CODE = 10
+        private const val PERMISSION_REQUEST_CODE = 10
     }
 
     override fun setDataToAdapter(data: MutableList<DataModel>) {
